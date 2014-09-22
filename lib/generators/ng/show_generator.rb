@@ -12,8 +12,9 @@ module Ng
 
       def route
         inject_into_file 'app/assets/javascripts/ng/routes.coffee', after: "$stateProvider\n" do
-          "    .state '#{ng_singular_name}',\n"\
-          "      url: '/#{plural_name}/:id'\n"\
+          "    .state         '#{ng_singular_name}',\n"\
+          "      controller:  '#{class_name}Ctrl'\n"\
+          "      url:         '/#{plural_name}/:id'\n"\
           "      templateUrl: '#{plural_name}/show.html'\n\n"
         end
       end
