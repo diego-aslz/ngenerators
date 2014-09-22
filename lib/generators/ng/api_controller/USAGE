@@ -8,3 +8,6 @@ Example:
         app/controllers/api/clients_controller.rb
         app/views/api/clients/show.json.jbuilder
         app/views/api/clients/index.json.jbuilder
+
+    Besides, it will update:
+        config/routes.rb
