@@ -1,6 +1,9 @@
 module Ng
   module Generators
     class Base < ::Rails::Generators::NamedBase
+      class_option :model, type: :string, default: nil,
+        description: "The name of the model when it differs from model_name"
+
       protected
 
       def ng_singular_name
@@ -12,7 +15,7 @@ module Ng
       end
 
       def klass
-        @klass ||= class_name.constantize
+        @klass ||= (options.model.try(:camelize) || class_name).constantize
       end
 
       def i18n_human
