@@ -1,0 +1,9 @@
+Description:
+    Generates AngularJS Directive
+
+Example:
+    rails generate ng:directive my_directive
+
+    This will create:
+        app/assets/templates/directives/my-directive.html
+        app/assets/javascripts/ng/directives/my-directive.coffee
