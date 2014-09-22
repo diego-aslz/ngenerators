@@ -1,0 +1,3 @@
+#!/bin/sh
+
+gem build ngenerators.gemspec && gem install ngenerators-*.gem && rm ngenerators-*.gem
