@@ -1,0 +1,10 @@
+Description:
+    Generates Controller and Views for the API.
+
+Example:
+    rails generate ng:api_controller client
+
+    This will create:
+        app/controllers/api/clients_controller.rb
+        app/views/api/clients/show.json.jbuilder
+        app/views/api/clients/index.json.jbuilder
