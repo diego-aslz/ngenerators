@@ -1,0 +1,129 @@
+<div class="page-header"><h1><%= i18n_human.pluralize(I18n.locale) %></h1></div>
+
+<form ng-submit="search()" class="form-horizontal">
+  <%- klass.columns.each do |column| -%>
+  <%%# <%= i18n_column(column).upcase %> %>
+  <div class="form-group">
+    <%- if column.klass == Date || column.klass == Time -%>
+    <div class="col-md-6">
+      <div class="row">
+        <label class="col-md-4 col-sm-2 col-xs-12 control-label" for="created_at_since"><%= i18n_column(column) %></label>
+        <div class="col-md-4 col-sm-5 col-xs-6">
+          <p class="input-group">
+            <input type="text" class="form-control" is-open="<%= column.name %>_since.active"
+              ng-model="filters.by_<%= column.name %>[since]" close-text="Fechar"
+              datepicker-popup="dd/MM/yyyy" ng-init="<%= column.name %>_since = {active: false}"
+              current-text="Hoje" clear-text="Limpar" id="<%= column.name %>_since" />
+            <span class="input-group-btn">
+              <button type="button" class="btn btn-default"
+                ng-click="openPicker($event, <%= column.name %>_since)">
+                <i class="glyphicon glyphicon-calendar"></i>
+              </button>
+            </span>
+          </p>
+        </div>
+        <div class="col-md-4 col-sm-5 col-xs-6">
+          <p class="input-group">
+            <input type="text" class="form-control" is-open="<%= column.name %>_until.active"
+              ng-model="filters.by_<%= column.name %>[until]" close-text="Fechar"
+              datepicker-popup="dd/MM/yyyy" ng-init="<%= column.name %>_until = {active: false}"
+              current-text="Hoje" clear-text="Limpar" id="<%= column.name %>_until" />
+            <span class="input-group-btn">
+              <button type="button" class="btn btn-default"
+                ng-click="openPicker($event, <%= column.name %>_until)">
+                <i class="glyphicon glyphicon-calendar"></i>
+              </button>
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+    <%- else -%>
+    <label for="by_<%= column_name(column) %>" class="col-sm-2 control-label"><%= i18n_column(column) %></label>
+    <div class="col-sm-10">
+      <%- if column_is_association? column -%>
+      <!-- USE THIS TO TYPEAHEAD -->
+      <input autocomplete="off" autofocus="autofocus" name="<%= column_name(column) %>"
+        class="form-control" id="by_<%= column_name(column) %>" ng-model="filters.by_<%= column_name(column) %>"
+        type="text" typeahead-min-length="3" typeahead-wait-ms="250"
+        typeahead="<%= column_name(column) %> as <%= column_name(column) %>.name for <%= column_name(column) %> in <%= column_name(column).pluralize %>($viewValue)">
+      <!-- END OF TYPEAHEAD -->
+
+      <!-- USE THIS TO SELECT -->
+      <select class="form-control" id="by_<%= column_name(column) %>" name="by_<%= column_name(column) %>" ng-model="filters.by_<%= column_name(column) %>"
+        ng-options="<%= column_name(column) %>.name for <%= column_name(column) %> in <%= column_name(column).pluralize %> track by <%= column_name(column) %>.id">
+        <option value=""></option>
+      </select>
+      <!-- END OF SELECT -->
+      <%- else -%>
+      <input type="text" name="by_<%= column_name(column) %>" id="by_<%= column_name(column) %>" class="form-control"
+        ng-model="filters.by_<%= column_name(column) %>">
+      <%- end -%>
+    </div>
+    <%- end -%>
+  </div>
+
+  <%- end -%>
+  <div class="form-group">
+    <div class="col-sm-10 col-sm-offset-2">
+      <input class="btn btn-primary" name="commit" type="submit" value="Buscar">
+      <a class="btn-warning btn" ng-click="clear()" id="clear_filters" title="Limpar Filtros">
+        <span class="glyphicon glyphicon-remove"></span>
+      </a>
+    </div>
+  </div>
+</form>
+
+<small>
+  <table class="table table-striped table-hover table-bordered" id="<%= plural_name %>">
+    <tbody>
+      <tr>
+        <%- klass.columns.each do |column| -%>
+        <th<%= ' class="text-right"' if column.klass <= Numeric %>><%= i18n_column(column) %></th>
+        <%- end -%>
+        <th></th>
+      </tr>
+      <tr id="row_<%= singular_name %>_{{ <%= ng_singular_name %>.id }}" ng-repeat="<%= ng_singular_name %> in <%= ng_plural_name %>">
+        <td><a ui-sref="<%= ng_singular_name %>({id: <%= ng_singular_name %>.id})">{{ <%= ng_singular_name %>.id }}</a></td>
+        <%- klass.columns.each do |column| -%>
+        <%- if column.name != 'id' -%>
+        <%- if column_is_association?(column) -%>
+        <td>{{ <%= ng_singular_name %>.<%= column_name(column) %>.name }}</td>
+        <%- elsif column.klass == Date || column.klass == Time -%>
+        <td>{{ <%= ng_singular_name %>.<%= column.name.camelize(:lower) %> | date }}</td>
+        <%- elsif column.klass <= Numeric -%>
+        <td class="text-right">{{ <%= ng_singular_name %>.<%= column.name.camelize(:lower) %> }}</td>
+        <%- else -%>
+        <td>{{ <%= ng_singular_name %>.<%= column.name.camelize(:lower) %> }}</td>
+        <%- end -%>
+        <%- end -%>
+        <%- end -%>
+        <td class="text-right">
+          <%%# VISUALIZAR %>
+          <a class="btn-info btn btn-xs" ui-sref="<%= ng_singular_name %>({ id: <%= ng_singular_name %>.id })"
+            id="show_<%= singular_name %>_{{ <%= ng_singular_name %>.id }}" title="Visualizar">
+            <span class="glyphicon glyphicon-search"></span></a>
+
+          <%%# ALTERAR %>
+          <a class="btn-warning btn btn-xs" ui-sref="edit<%= class_name %>({ id: <%= ng_singular_name %>.id })"
+            id="edit_<%= singular_name %>_{{ <%= ng_singular_name %>.id }}" title="Alterar" ng-show="<%= ng_singular_name %>.canUpdate">
+            <span class="glyphicon glyphicon-pencil"></span></a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</small>
+
+<div class="row">
+  <div class="col-sm-6">
+    <pagination total-items="count" ng-model="filters.page"
+      direction-links="false" boundary-links="true" rotate="false"
+      items-per-page="<%= Order.default_per_page %>" ng-change="search()"
+      max-size="5" first-text="<%= I18n.t('views.pagination.first') %>" last-text="<%= I18n.t('views.pagination.last') %>"></pagination>
+  </div>
+  <div class="col-sm-6">
+    <p class="text-right">
+      Exibindo <b>{{ <%= ng_plural_name %>.length }}</b> de <b>{{ count }}</b> <%= i18n_human.pluralize(I18n.locale) %>
+    </p>
+  </div>
+</div>
