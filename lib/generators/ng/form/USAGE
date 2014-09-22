@@ -1,0 +1,8 @@
+Description:
+    Generates Form HTML view to be used with AngularJS
+
+Example:
+    rails generate ng:form client
+
+    This will create:
+        app/assets/templates/clients/form.html.erb
