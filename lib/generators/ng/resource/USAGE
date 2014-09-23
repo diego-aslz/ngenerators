@@ -1,0 +1,8 @@
+Description:
+    Generates JS Rails Resource to be used with AngularJS
+
+Example:
+    rails generate ng:resource client
+
+    This will create:
+        app/assets/javascripts/ng/resources/client.coffee
