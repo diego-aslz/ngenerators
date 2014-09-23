@@ -1,0 +1,117 @@
+require 'spec_helper'
+
+describe "<%= class_name %>#index", js: true do
+  let(:user) { create(:<%= singular_name %>_reader_user) }
+  let(:index) { '/<%= plural_name %>' }
+
+  before do
+    sign_in user
+  end
+
+  it "presents <%= plural_name.gsub('_', ' ') %>" do
+    <%= singular_name %>1 = create :<%= singular_name %>
+    <%= singular_name %>2 = create :<%= singular_name %>
+
+    visit index
+
+    expect(page).to have_content(<%= singular_name %>1.name)
+    expect(page).to have_content(<%= singular_name %>2.name)
+  end
+
+  it "links to details" do
+    <%= singular_name %>1 = create :<%= singular_name %>
+
+    visit index
+    click_link "<%= singular_name %>_#{<%= singular_name %>1.id}_show"
+
+    expect(page        ).to have_content('Detalhes')
+    expect(current_path).to eq "#{index}/#{<%= singular_name %>1.id}"
+  end
+
+  <%- klass.columns.each do |column| -%>
+  it "filters by <%= column_name(column).gsub('_', ' ') %>" do
+    <%- ################################################ -%>
+    <%- # TESTING ASSOCIATION FILTER -%>
+    <%- if assoc = association_for(column) -%>
+    <%= column_name(column) %>1 = create :<%= assoc.class_name.underscore %>
+    <%= column_name(column) %>2 = create :<%= assoc.class_name.underscore %>
+    <%= singular_name %>1 = create :<%= singular_name %>, <%= column.name %>: <%= column_name(column) %>1
+    <%= singular_name %>2 = create :<%= singular_name %>, <%= column.name %>: <%= column_name(column) %>2
+
+    visit index
+    # FOR TYPEAHEAD
+    fill_in_typeahead '<%= i18n_column(column) %>', <%= column_name(column) %>1.name,
+      '#by_<%= column_name(column) %>_wrapper'
+    # FOR SELECT
+    #select <%= column_name(column) %>1.name, from: '<%= i18n_column(column) %>'
+    click_button 'Buscar'
+
+    expect(page).to_not have_content(<%= singular_name %>2.name)
+    expect(page).to     have_content(<%= singular_name %>1.name)
+    <%- ################################################ -%>
+    <%- # TESTING INTEGER FILTER -%>
+    <%- elsif column.type == :integer -%>
+    <%= singular_name %>1 = create :<%= singular_name %>, <%= column.name %>: 1
+    <%= singular_name %>2 = create :<%= singular_name %>, <%= column.name %>: 2
+
+    visit index
+    fill_in '<%= i18n_column(column) %>', with: 1
+    click_button 'Buscar'
+
+    expect(page).to_not have_content(<%= singular_name %>2.name)
+    expect(page).to     have_content(<%= singular_name %>1.name)
+    <%- ################################################ -%>
+    <%- # TESTING STRING FILTER -%>
+    <%- elsif column.type == :string -%>
+    <%= singular_name %>1 = create :<%= singular_name %>, <%= column.name %>: 'ABCD'
+    <%= singular_name %>2 = create :<%= singular_name %>, <%= column.name %>: 'EFGH'
+
+    visit index
+    fill_in '<%= i18n_column(column) %>', with: 'bc'
+    click_button 'Buscar'
+
+    expect(page).to_not have_content(<%= singular_name %>2.name)
+    expect(page).to     have_content(<%= singular_name %>1.name)
+    <%- ################################################ -%>
+    <%- # TESTING BOOLEAN FILTER -%>
+    <%- elsif column.type == :boolean -%>
+    <%= singular_name %>1 = create :<%= singular_name %>, <%= column.name %>: false
+    <%= singular_name %>2 = create :<%= singular_name %>, <%= column.name %>: true
+
+    visit index
+    select '<%= I18n.t(:no) %>', from: '<%= i18n_column(column) %>'
+    click_button 'Buscar'
+
+    expect(page).to_not have_content(<%= singular_name %>2.name)
+    expect(page).to     have_content(<%= singular_name %>1.name)
+
+    select '<%= I18n.t(:yes) %>', from: '<%= i18n_column(column) %>'
+    click_button 'Buscar'
+
+    expect(page).to_not have_content(<%= singular_name %>1.name)
+    expect(page).to     have_content(<%= singular_name %>2.name)
+    <%- ################################################ -%>
+    <%- # TESTING DATE FILTER -%>
+    <%- elsif column.type == :date || column.type == :datetime -%>
+    <%= singular_name %>1 = create :<%= singular_name %>, <%= column.name %>: 1.day.ago
+    <%= singular_name %>2 = create :<%= singular_name %>, <%= column.name %>: Date.today
+
+    visit index
+    fill_in '<%= column.name %>_until', with: I18n.l(<%= singular_name %>1.<%= column.name %>)
+    click_button 'Buscar'
+
+    expect(page).to_not have_content(<%= singular_name %>2.name)
+    expect(page).to     have_content(<%= singular_name %>1.name)
+
+    fill_in '<%= column.name %>_until', with: ''
+    fill_in '<%= column.name %>_since', with: I18n.l(<%= singular_name %>2.<%= column.name %>)
+    click_button 'Buscar'
+
+    expect(page).to_not have_content(<%= singular_name %>1.name)
+    expect(page).to     have_content(<%= singular_name %>2.name)
+    <%- end -%>
+    <%- ################################################ -%>
+  end
+
+  <%- end -%>
+end

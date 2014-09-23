@@ -4,5 +4,5 @@ angular.module('<%= application_name %>')
   class <%= class_name %> extends RailsResource
     @configure
       url: '/api/<%= plural_name %>'
-      name: '<%= ng_singular_name %>'
+      name: '<%= singular_name %>'
 ]

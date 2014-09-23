@@ -23,7 +23,7 @@ module Ng
       end
 
       def column_name(column)
-        column.name.gsub(/_id$/, '')
+        column.name.gsub(/_id$/, '').gsub(/^id_/, '')
       end
 
       def i18n_column(column)
@@ -49,6 +49,10 @@ module Ng
       def inject_ng_route(&block)
         inject_into_file 'app/assets/javascripts/ng/routes.coffee',
           after: "$stateProvider\n", &block
+      end
+
+      def acronym
+        singular_name.split('_').map{ |str| str[0] }.join
       end
     end
   end
