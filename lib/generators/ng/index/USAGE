@@ -1,0 +1,8 @@
+Description:
+    Generates Index HTML view to be used with AngularJS
+
+Example:
+    rails generate ng:index client
+
+    This will create:
+        app/assets/templates/clients/index.html.erb
