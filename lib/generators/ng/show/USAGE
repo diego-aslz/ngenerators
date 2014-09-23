@@ -2,8 +2,8 @@ Description:
     Generates HTML views to be used with AngularJS
 
 Example:
-    rails generate ng_views client
+    rails generate ng:show client
 
     This will create:
         app/assets/templates/clients/show.html
-        app/assets/templates/clients/form.html.erb
+        app/assets/javascripts/ng/controllers/client_ctrl.coffee
