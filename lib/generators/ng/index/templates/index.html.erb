@@ -1,6 +1,6 @@
 <div class="page-header"><h1><%= i18n_human.pluralize(I18n.locale) %></h1></div>
 
-<form ng-submit="search()" class="form-horizontal">
+<form ng-submit="searcher.search()" class="form-horizontal">
   <%- klass.columns.each do |column| -%>
   <%%# <%= i18n_column(column).upcase %> %>
   <div class="form-group">
@@ -46,15 +46,15 @@
       <input autocomplete="off" autofocus="autofocus" name="<%= column_name(column) %>"
         class="form-control" id="by_<%= column_name(column) %>" ng-model="filters.by_<%= column_name(column) %>"
         type="text" typeahead-min-length="3" typeahead-wait-ms="250"
-        typeahead="<%= column_name(column) %> as <%= column_name(column) %>.name for <%= column_name(column) %> in <%= column_name(column).pluralize %>($viewValue)">
+        typeahead="<%= column_name(column) %> as <%= column_name(column) %>.description for <%= column_name(column) %> in <%= column_name(column).pluralize %>($viewValue)">
       <!-- END OF TYPEAHEAD -->
-
       <!-- USE THIS TO SELECT -->
       <select class="form-control" id="by_<%= column_name(column) %>" name="by_<%= column_name(column) %>" ng-model="filters.by_<%= column_name(column) %>"
         ng-options="<%= column_name(column) %>.name for <%= column_name(column) %> in <%= column_name(column).pluralize %> track by <%= column_name(column) %>.id">
         <option value=""></option>
       </select>
       <!-- END OF SELECT -->
+
       <%- else -%>
       <input type="text" name="by_<%= column_name(column) %>" id="by_<%= column_name(column) %>" class="form-control"
         ng-model="filters.by_<%= column_name(column) %>">
@@ -118,7 +118,7 @@
   <div class="col-sm-6">
     <pagination total-items="count" ng-model="filters.page"
       direction-links="false" boundary-links="true" rotate="false"
-      items-per-page="<%= Order.default_per_page %>" ng-change="search()"
+      items-per-page="<%= klass.default_per_page %>" ng-change="searcher.search()"
       max-size="5" first-text="<%= I18n.t('views.pagination.first') %>" last-text="<%= I18n.t('views.pagination.last') %>"></pagination>
   </div>
   <div class="col-sm-6">

@@ -31,7 +31,11 @@ module Ng
       end
 
       def column_is_association?(column)
-        all_belongs_to.map(&:foreign_key).map(&:to_s).include?(column.name)
+        !!association_for(column)
+      end
+
+      def association_for(column)
+        all_belongs_to.detect { |bt| bt.foreign_key.to_s == column.name }
       end
 
       def all_belongs_to
