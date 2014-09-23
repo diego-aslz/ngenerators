@@ -7,6 +7,7 @@ module Ng
 
       def index
         template 'index.html.erb', "app/assets/templates/#{plural_name}/index.html.erb"
+        template 'index_ctrl.coffee', "app/assets/javascripts/ng/controllers/#{plural_name}_ctrl.coffee"
       end
     end
   end

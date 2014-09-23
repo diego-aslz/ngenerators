@@ -6,3 +6,4 @@ Example:
 
     This will create:
         app/assets/templates/clients/index.html.erb
+        app/assets/javascripts/ng/controllers/clients_ctrl.coffee
