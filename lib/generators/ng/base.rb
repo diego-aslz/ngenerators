@@ -31,7 +31,11 @@ module Ng
       end
 
       def column_is_association?(column)
-        column.name.ends_with? '_id'
+        all_belongs_to.map(&:foreign_key).map(&:to_s).include?(column.name)
+      end
+
+      def all_belongs_to
+        klass.reflect_on_all_associations.select { |a| a.macro == :belongs_to }
       end
 
       def input_type(column)
