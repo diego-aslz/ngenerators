@@ -37,6 +37,11 @@ module Ng
       def input_type(column)
         column.klass < Numeric ? 'number' : 'text'
       end
+
+      def inject_ng_route(&block)
+        inject_into_file 'app/assets/javascripts/ng/routes.coffee',
+          after: "$stateProvider\n", &block
+      end
     end
   end
 end
