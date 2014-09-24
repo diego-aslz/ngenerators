@@ -100,7 +100,8 @@
         <th></th>
       </tr>
       <tr id="row_<%= singular_name %>_{{ <%= ng_singular_name %>.id }}" ng-repeat="<%= ng_singular_name %> in <%= ng_plural_name %>">
-        <td class="text-right"><a ui-sref="<%= ng_singular_name %>({id: <%= ng_singular_name %>.id})">{{ <%= ng_singular_name %>.id }}</a></td>
+        <td class="text-right">
+          <a ui-sref="<%= ng_singular_name %>({id: <%= ng_singular_name %>.id})" id="<%= singular_name %>_{{ <%= ng_singular_name %>.id }}_show">{{ <%= ng_singular_name %>.id }}</a></td>
         <%- klass.columns.each do |column| -%>
         <%- next if column.name == klass.primary_key.to_s -%>
         <%- if column_is_association?(column) -%>
@@ -138,7 +139,7 @@
   </div>
   <div class="col-sm-6">
     <p class="text-right">
-      Exibindo <b>{{ <%= ng_plural_name %>.length }}</b> de <b>{{ count }}</b> <%= i18n_human.pluralize(I18n.locale) %>
+      Exibindo <b>{{ <%= ng_plural_name %>.length }}</b> de <b>{{ count }}</b>
     </p>
   </div>
 </div>

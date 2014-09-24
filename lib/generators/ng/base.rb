@@ -50,10 +50,6 @@ module Ng
         inject_into_file 'app/assets/javascripts/ng/routes.coffee',
           after: "$stateProvider\n", &block
       end
-
-      def acronym
-        singular_name.split('_').map{ |str| str[0] }.join
-      end
     end
   end
 end
