@@ -7,3 +7,4 @@ Example:
     This will create:
         app/assets/templates/clients/form.html.erb
         app/assets/javascripts/ng/controllers/client_form_ctrl.coffee
+        spec/features/client_show_spec.rb

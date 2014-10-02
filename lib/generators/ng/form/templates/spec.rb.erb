@@ -1,0 +1,26 @@
+require 'spec_helper'
+
+describe "<%= class_name %>#form", js: true, type: :feature do
+  let(:user) { create(:user) }
+  let(:path) { "/<%= plural_name %>/new" }
+
+  before do
+    sign_in user
+  end
+
+  it "saves new records" do
+    visit path
+
+    <%- klass.columns.each do |column| -%>
+    fill_in '<%= i18n_column(column) %>', with: '1'
+    <%- end -%>
+
+    expect do
+      click_button 'Salvar'
+    end.to change(<%= class_name %>, :count).by(1)
+    <%= singular_name %> = <%= class_name %>.last
+    <%- klass.columns.each do |column| -%>
+    expect(<%= singular_name %>.<%= column.name %>).to eq '1'
+    <%- end -%>
+  end
+end
