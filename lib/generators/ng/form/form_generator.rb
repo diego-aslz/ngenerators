@@ -9,6 +9,15 @@ module Ng
         template 'form.html.erb', "app/assets/templates/#{plural_name}/form.html.erb"
         template 'form_ctrl.coffee', "app/assets/javascripts/ng/controllers/#{singular_name}_form_ctrl.coffee"
       end
+
+      def route
+        inject_ng_route do
+          "    .state         '#{ng_singular_name}Form',\n"\
+          "      controller:  '#{class_name}FormCtrl'\n"\
+          "      url:         '/#{plural_name}/new'\n"\
+          "      templateUrl: '#{plural_name}/form.html'\n\n"
+        end
+      end
     end
   end
 end
