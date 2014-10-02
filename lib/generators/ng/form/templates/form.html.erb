@@ -3,7 +3,7 @@
   <h1 ng-if="  <%= ng_singular_name %>.id"><%= i18n_human %> {{ <%= ng_singular_name %>.id }}</h1>
 </div>
 
-<form class="form-horizontal" ng-submit="save()" name="form" novalidate>
+<form class="form-horizontal" ng-submit="<%= ng_singular_name %>.save()" name="form" novalidate>
   <div class="form-inputs">
     <%- klass.columns.each do |column| -%>
     <%%# <%= i18n_column(column).upcase %> %>
