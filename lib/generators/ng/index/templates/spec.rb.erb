@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "<%= class_name %>#index", js: true do
   let(:user) { create(:<%= singular_name %>_reader_user) }
-  let(:index) { '/<%= plural_name %>' }
+  let(:index) { "/<%= plural_name %>" }
 
   before do
     sign_in user
@@ -29,7 +29,7 @@ describe "<%= class_name %>#index", js: true do
   end
 
   <%- klass.columns.each do |column| -%>
-  it "filters by <%= assoc.name.gsub('_', ' ') %>" do
+  it "filters by <%= column.name.gsub('_', ' ') %>" do
     <%- ################################################ -%>
     <%- # TESTING ASSOCIATION FILTER -%>
     <%- if assoc = association_for(column) -%>
