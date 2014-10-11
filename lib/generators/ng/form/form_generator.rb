@@ -19,6 +19,10 @@ module Ng
           "    .state         '#{ng_singular_name}Form',\n"\
           "      controller:  '#{class_name}FormCtrl'\n"\
           "      url:         '/#{plural_name}/new'\n"\
+          "      templateUrl: '#{plural_name}/form.html'\n\n"\
+          "    .state         '#{ng_singular_name}Edit',\n"\
+          "      controller:  '#{class_name}FormCtrl'\n"\
+          "      url:         '/#{plural_name}/:id/edit'\n"\
           "      templateUrl: '#{plural_name}/form.html'\n\n"
         end
       end
