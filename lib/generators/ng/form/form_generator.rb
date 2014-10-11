@@ -11,7 +11,7 @@ module Ng
       end
 
       def spec
-        template 'spec.rb.erb', "spec/features/#{singular_name}_show_spec.rb"
+        template 'spec.rb.erb', "spec/features/#{singular_name}_form_spec.rb"
       end
 
       def route
