@@ -1,7 +1,7 @@
 angular.module('<%= application_name %>')
 
-.controller '<%= class_name %>FormCtrl', ['$scope', '$stateParams', '<%= class_name %>',
-  ($scope, $stateParams, <%= class_name %>) ->
+.controller '<%= class_name %>FormCtrl', ['$scope', '$stateParams', <%= ([class_name] + belongs_to_class_names).map{ |k| "'#{k}'"}.join(', ') %>,
+  ($scope, $stateParams, <%= ([class_name] + belongs_to_class_names).join(', ') %>) ->
     if $stateParams.id
       <%= class_name %>.get($stateParams.id).then (<%= ng_singular_name %>) ->
         $scope.<%= ng_singular_name %> = <%= ng_singular_name %>

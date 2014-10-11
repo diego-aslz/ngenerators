@@ -26,6 +26,10 @@ module Ng
         column.name.gsub(/_id$/, '').gsub(/^id_/, '')
       end
 
+      def ng_column_name(column)
+        column_name(column).camelize(:lower)
+      end
+
       def i18n_column(column)
         klass.human_attribute_name(column_name(column))
       end
@@ -49,6 +53,10 @@ module Ng
       def inject_ng_route(&block)
         inject_into_file 'app/assets/javascripts/ng/routes.coffee',
           after: "$stateProvider\n", &block
+      end
+
+      def belongs_to_class_names
+        all_belongs_to.map(&:class_name)
       end
     end
   end

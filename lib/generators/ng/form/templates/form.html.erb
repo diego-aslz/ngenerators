@@ -7,7 +7,7 @@
   <div class="form-inputs">
     <%- klass.columns.each do |column| -%>
     <%%# <%= i18n_column(column).upcase %> %>
-    <div class="form-group">
+    <div class="form-group" id="<%= column_name(column) %>_wrapper">
       <label class="col-sm-2 control-label" for="<%= singular_name %>_<%= column_name(column) %>"><%= i18n_column(column) %></label>
       <div class="col-sm-10">
         <%- if column_is_association? column -%>
@@ -15,12 +15,12 @@
         <input autocomplete="off" autofocus="autofocus" name="<%= column_name(column) %>" required
           class="form-control" id="<%= singular_name %>_<%= column_name(column) %>" ng-model="<%= ng_singular_name %>.<%= column_name(column) %>"
           type="text" typeahead-min-length="3" typeahead-wait-ms="250"
-          typeahead="<%= column_name(column) %> as <%= column_name(column) %>.name for <%= column_name(column) %> in <%= column_name(column).pluralize %>($viewValue)">
+          typeahead="<%= ng_column_name(column) %> as <%= ng_column_name(column) %>.name for <%= ng_column_name(column) %> in <%= ng_column_name(column).pluralize %>($viewValue)">
         <!-- END OF TYPEAHEAD -->
 
         <!-- USE THIS TO SELECT -->
         <select class="form-control" id="<%= singular_name %>_<%= column.name %>" ng-model="<%= ng_singular_name %>.<%= column.name %>"
-          ng-options="<%= column_name(column) %>.name for <%= column_name(column) %> in <%= column_name(column).pluralize %> track by <%= column_name(column) %>.id">
+          ng-options="<%= ng_column_name(column) %>.name for <%= ng_column_name(column) %> in <%= ng_column_name(column).pluralize %> track by <%= ng_column_name(column) %>.id">
         </select>
         <!-- END OF SELECT -->
         <%- else -%>
@@ -34,5 +34,5 @@
   </div>
 
   <input class="btn btn-success" type="submit" value="Salvar" ng-disabled="form.$invalid">
-  <a class="btn btn-default" href="/">Cancelar</a>
+  <a class="btn btn-default" ui-sref="<%= ng_plural_name %>">Cancelar</a>
 </form>
