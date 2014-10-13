@@ -1,12 +1,16 @@
 angular.module('<%= application_name %>')
 
-.controller '<%= class_name %>FormCtrl', ['$scope', '$stateParams', <%= ([class_name] + belongs_to_class_names).map{ |k| "'#{k}'"}.join(', ') %>,
-  ($scope, $stateParams, <%= ([class_name] + belongs_to_class_names).join(', ') %>) ->
+.controller '<%= class_name %>FormCtrl', ['$scope', '$stateParams', '$state', <%= ([class_name] + belongs_to_class_names).map{ |k| "'#{k}'"}.join(', ') %>,
+  ($scope, $stateParams, $state, <%= ([class_name] + belongs_to_class_names).join(', ') %>) ->
     if $stateParams.id
       <%= class_name %>.get($stateParams.id).then (<%= ng_singular_name %>) ->
         $scope.<%= ng_singular_name %> = <%= ng_singular_name %>
     else
       $scope.<%= ng_singular_name %> = new <%= class_name %>()
+
+    $scope.save = ->
+      $scope.<%= ng_singular_name %>.save().then (<%= ng_singular_name %>) ->
+        $state.go('<%= ng_singular_name %>', { id: <%= ng_singular_name %>.id })
     <%- klass.columns.each do |column| -%>
     <%- if (assoc = association_for(column)) -%>
 

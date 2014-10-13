@@ -19,7 +19,7 @@
         <!-- END OF TYPEAHEAD -->
 
         <!-- USE THIS TO SELECT -->
-        <select class="form-control" id="<%= singular_name %>_<%= column.name %>" ng-model="<%= ng_singular_name %>.<%= column.name %>"
+        <select class="form-control" id="<%= singular_name %>_<%= column_name(column) %>" ng-model="<%= ng_singular_name %>.<%= column.name %>"
           ng-options="<%= ng_column_name(column) %>.name for <%= ng_column_name(column) %> in <%= ng_column_name(column).pluralize %> track by <%= ng_column_name(column) %>.id">
         </select>
         <!-- END OF SELECT -->
