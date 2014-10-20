@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "<%= class_name %>#index", js: true do
+describe "<%= class_name %>#index", js: true, type: :feature do
   let(:user) { create(:<%= singular_name %>_reader_user) }
   let(:index) { "/<%= plural_name %>" }
 
@@ -97,14 +97,14 @@ describe "<%= class_name %>#index", js: true do
     <%= singular_name %>2 = create :<%= singular_name %>, <%= column.name %>: Date.today
 
     visit index
-    fill_in '<%= column.name %>_until', with: I18n.l(<%= singular_name %>1.<%= column.name %>)
+    fill_in '<%= column.name %>_until', with: <%= singular_name %>1.<%= column.name %>.strftime('%d/%m/%Y')
     click_button 'Buscar'
 
     expect(page).to_not have_content(<%= singular_name %>2.name)
     expect(page).to     have_content(<%= singular_name %>1.name)
 
     fill_in '<%= column.name %>_until', with: ''
-    fill_in '<%= column.name %>_since', with: I18n.l(<%= singular_name %>2.<%= column.name %>)
+    fill_in '<%= column.name %>_since', with: <%= singular_name %>2.<%= column.name %>.strftime('%d/%m/%Y')
     click_button 'Buscar'
 
     expect(page).to_not have_content(<%= singular_name %>1.name)

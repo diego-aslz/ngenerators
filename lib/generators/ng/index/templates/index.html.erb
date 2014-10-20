@@ -10,11 +10,11 @@
     <%- if column.klass == Date || column.klass == Time -%>
     <div class="col-md-6">
       <div class="row">
-        <label class="col-md-4 col-sm-2 col-xs-12 control-label" for="created_at_since"><%= i18n_column(column) %></label>
+        <label class="col-md-4 col-sm-2 col-xs-12 control-label" for="<%= column.name %>_since"><%= i18n_column(column) %></label>
         <div class="col-md-4 col-sm-5 col-xs-6">
           <p class="input-group">
             <input type="text" class="form-control" is-open="<%= column.name %>_since.active"
-              ng-model="filters['by_<%= column.name %>[since]']" close-text="Fechar"
+              ng-model="filters.by_<%= column.name %>_since" close-text="Fechar"
               datepicker-popup="dd/MM/yyyy" ng-init="<%= column.name %>_since = {active: false}"
               current-text="Hoje" clear-text="Limpar" id="<%= column.name %>_since"
               title="<%= I18n.t(:since) %>" />
@@ -29,7 +29,7 @@
         <div class="col-md-4 col-sm-5 col-xs-6">
           <p class="input-group">
             <input type="text" class="form-control" is-open="<%= column.name %>_until.active"
-              ng-model="filters['by_<%= column.name %>[until]']" close-text="Fechar"
+              ng-model="filters.by_<%= column.name %>_until" close-text="Fechar"
               datepicker-popup="dd/MM/yyyy" ng-init="<%= column.name %>_until = {active: false}"
               current-text="Hoje" clear-text="Limpar" id="<%= column.name %>_until"
               title="<%= I18n.t(:until) %>" />

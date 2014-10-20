@@ -7,11 +7,12 @@ module Api
     <%- anothers = [] -%>
     <%- klass.columns.each do |column| -%>
     <%- if column.type == :date || column.type == :datetime -%>
-    has_scope :by_<%= column_name(column) %>, type: :hash, using: [:since, :until]
-    <%- else anothers << column end -%>
+    <%- anothers << "#{column_name(column)}_since" -%>
+    <%- anothers << "#{column_name(column)}_until" -%>
+    <%- else anothers << column_name(column) end -%>
     <%- end -%>
     <%- if anothers.any? -%>
-    has_scope <%= anothers.map{ |col| ":by_#{column_name(col)}"}.join(', ') %>
+    has_scope <%= anothers.map{ |col| ":by_#{col}"}.join(', ') %>
     <%- end -%>
   end
 end
