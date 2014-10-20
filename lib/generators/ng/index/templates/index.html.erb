@@ -20,7 +20,7 @@
               title="<%= I18n.t(:since) %>" />
             <span class="input-group-btn">
               <button type="button" class="btn btn-default"
-                ng-click="$event.preventDefault(); $event.stopPropagation(); <%= column.name %>_since.active = !<%= column.name %>_since.active)">
+                ng-click="$event.preventDefault(); $event.stopPropagation(); <%= column.name %>_since.active = !<%= column.name %>_since.active">
                 <i class="glyphicon glyphicon-calendar"></i>
               </button>
             </span>
@@ -35,7 +35,7 @@
               title="<%= I18n.t(:until) %>" />
             <span class="input-group-btn">
               <button type="button" class="btn btn-default"
-                ng-click="$event.preventDefault(); $event.stopPropagation(); <%= column.name %>_until.active = !<%= column.name %>_until.active)">
+                ng-click="$event.preventDefault(); $event.stopPropagation(); <%= column.name %>_until.active = !<%= column.name %>_until.active">
                 <i class="glyphicon glyphicon-calendar"></i>
               </button>
             </span>
