@@ -1,0 +1,15 @@
+Description:
+    Installs needed files to support other generated code.
+
+Example:
+    rails generate ng:install
+
+    This will create:
+        app/assets/javascripts/application.coffee
+        app/assets/javascripts/ng/routes.coffee
+        app/assets/javascripts/ng/controllers/application_ctrl.coffee
+        app/assets/javascripts/ng/resources/ability.coffee
+        app/assets/javascripts/ng/services/locale.coffee
+        app/assets/javascripts/ng/services/query_string.coffee
+        app/assets/javascripts/ng/services/searcher.coffee
+        app/assets/javascripts/ng/services/toggler.coffee
