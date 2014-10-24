@@ -4,8 +4,8 @@ angular.module('<%= application_name %>')
   ($scope, searcher, <%= ([class_name] + belongs_to_class_names).join(', ') %>) ->
     $scope.searcher = searcher($scope, <%= class_name %>, '<%= ng_plural_name %>')
     <%- klass.columns.each do |column| -%>
-
     <%- if (assoc = association_for(column)) -%>
+
     # FOR TYPEAHEAD
     $scope.<%= assoc.plural_name %> = (filter) ->
       <%= assoc.class_name %>.$get(<%= assoc.class_name %>.$url('ahead'), by_name: filter)
