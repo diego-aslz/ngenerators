@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'ngenerators'
-  s.version     = '0.0.1'
-  s.date        = '2014-10-02'
+  s.version     = '0.0.2'
+  s.date        = '2014-10-24'
   s.summary     = "Rails Generators for AngularJS."
   s.description = "This gem provides generators which generate AngularJS views,"\
     " controllers and resources for AngularJS."
