@@ -28,71 +28,60 @@ describe "<%= class_name %>#index", js: true, type: :feature do
     expect(current_path).to eq "#{index}/#{<%= singular_name %>1.id}"
   end
 
-  <%- klass.columns.each do |column| -%>
-  it "filters by <%= column.name.gsub('_', ' ') %>" do
+  <%- attributes.each do |attribute| -%>
+  it "filters by <%= attribute.name.gsub('_', ' ') %>" do
     <%- ################################################ -%>
     <%- # TESTING ASSOCIATION FILTER -%>
-    <%- if assoc = association_for(column) -%>
-    <%= assoc.name %>1 = create :<%= assoc.class_name.underscore %>
-    <%= assoc.name %>2 = create :<%= assoc.class_name.underscore %>
+    <%- if attribute.type == :typeahead -%>
+    <%- assoc = association_for(attribute, by: :name) -%>
+    <%= assoc.name %>1 = create :<%= assoc.klass.to_s.underscore %>
+    <%= assoc.name %>2 = create :<%= assoc.klass.to_s.underscore %>
     <%= singular_name %>1 = create :<%= singular_name %>, <%= assoc.name %>: <%= assoc.name %>1
     <%= singular_name %>2 = create :<%= singular_name %>, <%= assoc.name %>: <%= assoc.name %>2
 
     visit index
-    # FOR TYPEAHEAD
-    fill_in_typeahead '<%= i18n_column(column) %>', <%= assoc.name %>1.name,
-      find('#by_<%= column_name(column) %>_wrapper')
-    # FOR SELECT
-    #select <%= assoc.name %>1.name, from: '<%= i18n_column(column) %>'
+    fill_in_typeahead '<%= i18n_column(attribute) %>', <%= assoc.name %>1.name,
+      find('#by_<%= column_name(attribute) %>_wrapper')
     click_button 'Buscar'
 
     expect(page).to_not have_content(<%= singular_name %>2.name)
     expect(page).to     have_content(<%= singular_name %>1.name)
     <%- ################################################ -%>
-    <%- # TESTING INTEGER FILTER -%>
-    <%- elsif column.type == :integer -%>
-    <%= singular_name %>1 = create :<%= singular_name %>, <%= column.name %>: 1
-    <%= singular_name %>2 = create :<%= singular_name %>, <%= column.name %>: 2
+    <%- # TESTING SELECT FILTER -%>
+    <%- elsif attribute.type == :select -%>
+    <%- assoc = association_for(attribute, by: :name) -%>
+    <%= assoc.name %>1 = create :<%= assoc.klass.to_s.underscore %>
+    <%= assoc.name %>2 = create :<%= assoc.klass.to_s.underscore %>
+    <%= singular_name %>1 = create :<%= singular_name %>, <%= assoc.name %>: <%= assoc.name %>1
+    <%= singular_name %>2 = create :<%= singular_name %>, <%= assoc.name %>: <%= assoc.name %>2
 
     visit index
-    fill_in '<%= i18n_column(column) %>', with: 1
-    click_button 'Buscar'
-
-    expect(page).to_not have_content(<%= singular_name %>2.name)
-    expect(page).to     have_content(<%= singular_name %>1.name)
-    <%- ################################################ -%>
-    <%- # TESTING STRING FILTER -%>
-    <%- elsif column.type == :string -%>
-    <%= singular_name %>1 = create :<%= singular_name %>, <%= column.name %>: 'ABCD'
-    <%= singular_name %>2 = create :<%= singular_name %>, <%= column.name %>: 'EFGH'
-
-    visit index
-    fill_in '<%= i18n_column(column) %>', with: 'bc'
+    select <%= assoc.name %>1.name, from: '<%= i18n_column(attribute) %>'
     click_button 'Buscar'
 
     expect(page).to_not have_content(<%= singular_name %>2.name)
     expect(page).to     have_content(<%= singular_name %>1.name)
     <%- ################################################ -%>
     <%- # TESTING BOOLEAN FILTER -%>
-    <%- elsif column.type == :boolean -%>
-    <%= singular_name %>1 = create :<%= singular_name %>, <%= column.name %>: false
-    <%= singular_name %>2 = create :<%= singular_name %>, <%= column.name %>: true
+    <%- elsif attribute.type == :boolean -%>
+    <%= singular_name %>1 = create :<%= singular_name %>, <%= attribute.name %>: false
+    <%= singular_name %>2 = create :<%= singular_name %>, <%= attribute.name %>: true
 
     visit index
-    select '<%= I18n.t(:no) %>', from: '<%= i18n_column(column) %>'
+    select '<%= I18n.t(:no) %>', from: '<%= i18n_column(attribute) %>'
     click_button 'Buscar'
 
     expect(page).to_not have_content(<%= singular_name %>2.name)
     expect(page).to     have_content(<%= singular_name %>1.name)
 
-    select '<%= I18n.t(:yes) %>', from: '<%= i18n_column(column) %>'
+    select '<%= I18n.t(:yes) %>', from: '<%= i18n_column(attribute) %>'
     click_button 'Buscar'
 
     expect(page).to_not have_content(<%= singular_name %>1.name)
     expect(page).to     have_content(<%= singular_name %>2.name)
     <%- ################################################ -%>
     <%- # TESTING DATE FILTER -%>
-    <%- elsif column.type == :date || column.type == :datetime -%>
+    <%- elsif attribute.type == :date -%>
     <%= singular_name %>1 = create :<%= singular_name %>, <%= column.name %>: 1.day.ago
     <%= singular_name %>2 = create :<%= singular_name %>, <%= column.name %>: Date.today
 
@@ -109,9 +98,53 @@ describe "<%= class_name %>#index", js: true, type: :feature do
 
     expect(page).to_not have_content(<%= singular_name %>1.name)
     expect(page).to     have_content(<%= singular_name %>2.name)
+    <%- ################################################ -%>
+    <%- # TESTING CHECKBOXES FILTER -%>
+    <%- elsif attribute.type == :checkboxes -%>
+    <%- if (assoc = association_for(attribute, by: :name)) -%>
+    <%= assoc.name %>1 = create :<%= assoc.klass.to_s.underscore %>
+    <%= assoc.name %>2 = create :<%= assoc.klass.to_s.underscore %>
+    <%= assoc.name %>3 = create :<%= assoc.klass.to_s.underscore %>
+    <%= singular_name %>1 = create :<%= singular_name %>, <%= attribute.name %>: <%= assoc.name %>1
+    <%= singular_name %>2 = create :<%= singular_name %>, <%= attribute.name %>: <%= assoc.name %>2
+    <%= singular_name %>3 = create :<%= singular_name %>, <%= attribute.name %>: <%= assoc.name %>3
+
+    visit index
+    check <%= assoc.name %>1.name
+    check <%= assoc.name %>2.name
+    click_button 'Buscar'
+
+    expect(page).to_not have_content(<%= singular_name %>3.name)
+    expect(page).to     have_content(<%= singular_name %>2.name)
+    expect(page).to     have_content(<%= singular_name %>1.name)
+    <%- else -%>
+    <%= singular_name %>1 = create :<%= singular_name %>, <%= attribute.name %>: 1
+    <%= singular_name %>1 = create :<%= singular_name %>, <%= attribute.name %>: 2
+    <%= singular_name %>1 = create :<%= singular_name %>, <%= attribute.name %>: 3
+
+    visit index
+    check 1
+    check 2
+    click_button 'Buscar'
+
+    expect(page).to_not have_content(<%= singular_name %>3.name)
+    expect(page).to     have_content(<%= singular_name %>2.name)
+    expect(page).to     have_content(<%= singular_name %>1.name)
+    <%- end -%>
+    <%- ################################################ -%>
+    <%- # TESTING STRING FILTER -%>
+    <%- else -%>
+    <%= singular_name %>1 = create :<%= singular_name %>, <%= attribute.name %>: 'ABCD'
+    <%= singular_name %>2 = create :<%= singular_name %>, <%= attribute.name %>: 'EFGH'
+
+    visit index
+    fill_in '<%= i18n_column(attribute) %>', with: 'bc'
+    click_button 'Buscar'
+
+    expect(page).to_not have_content(<%= singular_name %>2.name)
+    expect(page).to     have_content(<%= singular_name %>1.name)
     <%- end -%>
     <%- ################################################ -%>
   end
-
   <%- end -%>
 end

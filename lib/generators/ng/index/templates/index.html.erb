@@ -1,85 +1,102 @@
 <div class="page-header"><h1><%= i18n_human.pluralize(I18n.locale) %></h1></div>
 
 <form ng-submit="searcher.search()" class="form-horizontal">
-  <%- klass.columns.each do |column| -%>
-  <%- next if column.name == klass.primary_key.to_s -%>
-  <%%# <%= i18n_column(column).upcase %> %>
+<%- attributes.each do |attribute| -%>
+  <%%# <%= i18n_option_attribute(attribute).upcase %> %>
   <div class="form-group">
-    <%- ################################################ -%>
-    <%- # DATE / TIME FILTER -%>
-    <%- if column.klass == Date || column.klass == Time -%>
+<%- if attribute.type == :date -%>
     <div class="col-md-6">
       <div class="row">
-        <label class="col-md-4 col-sm-2 col-xs-12 control-label" for="<%= column.name %>_since"><%= i18n_column(column) %></label>
+        <label class="col-md-4 col-sm-2 col-xs-12 control-label" for="<%= attribute.name %>_since"><%= i18n_option_attribute(attribute) %></label>
         <div class="col-md-4 col-sm-5 col-xs-6">
           <p class="input-group">
-            <input type="text" class="form-control" is-open="<%= column.name %>_since.active"
-              ng-model="filters.by_<%= column.name %>_since" close-text="Fechar"
-              datepicker-popup="dd/MM/yyyy" ng-init="<%= column.name %>_since = {active: false}"
-              current-text="Hoje" clear-text="Limpar" id="<%= column.name %>_since"
+            <input type="text" class="form-control" is-open="<%= ng_var(attribute.name) %>Since.active"
+              ng-model="filters.by<%= attribute.name.camelize %>Since" close-text="Fechar"
+              datepicker-popup="dd/MM/yyyy" ng-init="<%= ng_var(attribute.name) %>Since = {active: false}"
+              current-text="Hoje" clear-text="Limpar" id="<%= attribute.name %>_since"
               title="<%= I18n.t(:since) %>" />
             <span class="input-group-btn">
-              <button type="button" class="btn btn-default"
-                ng-click="$event.preventDefault(); $event.stopPropagation(); <%= column.name %>_since.active = !<%= column.name %>_since.active">
+              <a class="btn btn-default" href
+                ng-click="<%= ng_var(attribute.name) %>Since.active = !<%= ng_var(attribute.name) %>Since.active">
                 <i class="glyphicon glyphicon-calendar"></i>
-              </button>
+              </a>
             </span>
           </p>
         </div>
         <div class="col-md-4 col-sm-5 col-xs-6">
           <p class="input-group">
-            <input type="text" class="form-control" is-open="<%= column.name %>_until.active"
-              ng-model="filters.by_<%= column.name %>_until" close-text="Fechar"
-              datepicker-popup="dd/MM/yyyy" ng-init="<%= column.name %>_until = {active: false}"
-              current-text="Hoje" clear-text="Limpar" id="<%= column.name %>_until"
+            <input type="text" class="form-control" is-open="<%= ng_var(attribute.name) %>Until.active"
+              ng-model="filters.by<%= attribute.name.camelize %>Until" close-text="Fechar"
+              datepicker-popup="dd/MM/yyyy" ng-init="<%= ng_var(attribute.name) %>Until = {active: false}"
+              current-text="Hoje" clear-text="Limpar" id="<%= attribute.name %>_until"
               title="<%= I18n.t(:until) %>" />
             <span class="input-group-btn">
-              <button type="button" class="btn btn-default"
-                ng-click="$event.preventDefault(); $event.stopPropagation(); <%= column.name %>_until.active = !<%= column.name %>_until.active">
+              <a class="btn btn-default" href
+                ng-click="<%= ng_var(attribute.name) %>Until.active = !<%= ng_var(attribute.name) %>Until.active">
                 <i class="glyphicon glyphicon-calendar"></i>
-              </button>
+              </a>
             </span>
           </p>
         </div>
       </div>
     </div>
-    <%- else -%>
-    <label for="by_<%= column_name(column) %>" class="col-sm-2 control-label"><%= i18n_column(column) %></label>
-    <div class="col-sm-10" id="by_<%= column_name(column) %>_wrapper">
-      <%- ################################################ -%>
-      <%- # ASSOCIATION FILTER -%>
-      <%- if assoc = association_for(column) -%>
-      <!-- USE THIS TO TYPEAHEAD -->
-      <input autocomplete="off" autofocus="autofocus" name="<%= column_name(column) %>"
-        class="form-control" id="by_<%= column_name(column) %>" ng-model="filters.by_<%= column_name(column) %>"
+
+<%- else -%>
+    <label for="by_<%= attribute.name %>" class="col-sm-2 control-label"><%= i18n_option_attribute(attribute) %></label>
+    <div class="col-sm-10" id="by_<%= attribute.name %>_wrapper">
+<%- ################################################ -%>
+<%- # TYPEAHEAD -%>
+<%- if attribute.type == :typeahead -%>
+<%- assoc = association_for(attribute, by: :name) -%>
+      <input autocomplete="off" name="<%= attribute.name %>"
+        class="form-control" id="by_<%= attribute.name %>" ng-model="filters.by<%= attribute.name.camelize %>"
         type="text" typeahead-min-length="3" typeahead-wait-ms="250"
-        typeahead="<%= assoc.class_name.camelize(:lower) %> as <%= assoc.class_name.camelize(:lower) %>.description for <%= assoc.class_name.camelize(:lower) %> in <%= assoc.plural_name.camelize(:lower) %>($viewValue)">
-      <!-- END OF TYPEAHEAD -->
-      <!-- USE THIS TO SELECT -->
-      <select class="form-control" id="by_<%= column_name(column) %>" name="by_<%= column_name(column) %>" ng-model="filters.by_<%= column_name(column) %>"
-        ng-options="<%= assoc.class_name.camelize(:lower) %>.name for <%= assoc.class_name.camelize(:lower) %> in <%= assoc.plural_name.camelize(:lower) %> track by <%= assoc.class_name.camelize(:lower) %>.id">
+        typeahead="<%= ng_var(assoc.klass.to_s) %> as <%= ng_var(assoc.klass.to_s) %>.description for <%= ng_var(assoc.klass.to_s) %> in <%= ng_var(assoc.plural_name) %>($viewValue)">
+<%- ################################################ -%>
+<%- # SELECT -%>
+<%- elsif attribute.type == :select -%>
+<%- assoc = association_for(attribute, by: :name) -%>
+      <select class="form-control" id="by_<%= attribute.name %>" name="by_<%= attribute.name %>" ng-model="filters.by<%= attribute.name.camelize %>"
+        ng-options="<%= ng_var(assoc.klass.to_s) %>.name for <%= ng_var(assoc.klass.to_s) %> in <%= ng_var(assoc.plural_name) %> track by <%= ng_var(assoc.klass.to_s) %>.id">
         <option value=""></option>
       </select>
-      <!-- END OF SELECT -->
-      <%- ################################################ -%>
-      <%- # BOOLEAN FILTER -%>
-      <%- elsif column.type == :boolean -%>
-      <select class="form-control" id="by_<%= column_name(column) %>" name="by_<%= column_name(column) %>" ng-model="filters.by_<%= column_name(column) %>"
+<%- ################################################ -%>
+<%- # BOOLEAN -%>
+<%- elsif attribute.type == :boolean -%>
+      <select class="form-control" id="by_<%= attribute.name %>" name="by_<%= attribute.name %>" ng-model="filters.by<%= attribute.name.camelize %>"
         <option value=""></option>
         <option value="true"><%= I18n.t(:yes) %></option>
         <option value="false"><%= I18n.t(:no) %></option>
       </select>
-      <%- ################################################ -%>
-      <%- else -%>
-      <input type="text" name="by_<%= column_name(column) %>" id="by_<%= column_name(column) %>" class="form-control"
-        ng-model="filters.by_<%= column_name(column) %>">
-      <%- end -%>
-      <%- ################################################ -%>
+<%- ################################################ -%>
+<%- # CHECKBOXES -%>
+<%- elsif attribute.type == :checkboxes -%>
+<%- if (assoc = association_for(attribute, by: :name)) -%>
+      <label class="checkbox-inline" ng-repeat="<%= ng_var(attribute.name) %> in <%= ng_var(assoc.plural_name) %>">
+        <input type="checkbox" value="{{ <%= ng_var(attribute.name) %>.id }}"
+          ng-click="searcher.toggleArrayProperty(filters, 'by<%= attribute.name.camelize %>[]', <%= ng_var(attribute.name) %>.id)"
+          ng-checked="filters['by<%= attribute.name.camelize %>[]'].indexOf(<%= ng_var(attribute.name) %>.id) > -1">
+        {{ <%= ng_var(attribute.name) %>.name }}
+      </label>
+<%- else -%>
+      <label class="checkbox-inline" ng-repeat="<%= ng_var(attribute.name) %> in <%= ng_var(attribute.name.pluralize) %>">
+        <input type="checkbox" value="{{ <%= ng_var(attribute.name) %> }}"
+          ng-click="searcher.toggleArrayProperty(filters, 'by<%= attribute.name.camelize %>[]', <%= ng_var(attribute.name) %>)"
+          ng-checked="filters['by<%= attribute.name.camelize %>[]'].indexOf(<%= ng_var(attribute.name) %>) > -1">
+        {{ <%= ng_var(attribute.name) %> }}
+      </label>
+<%- end -%>
+<%- ################################################ -%>
+<%- # STRING -%>
+<%- else -%>
+      <input type="text" name="by_<%= attribute.name %>" id="by_<%= attribute.name %>" class="form-control"
+        ng-model="filters.by<%= attribute.name.camelize %>">
+<%- end -%>
     </div>
-    <%- end -%>
+<%- end -%>
   </div>
 
-  <%- end -%>
+<%- end -%>
   <div class="form-group">
     <div class="col-sm-10 col-sm-offset-2">
       <input class="btn btn-primary" name="commit" type="submit" value="Buscar">
@@ -95,7 +112,7 @@
     <tbody>
       <tr>
         <%- klass.columns.each do |column| -%>
-        <th<%= ' class="text-right"' if column.klass <= Numeric %>><%= i18n_column(column) %></th>
+        <th<%= ' class="text-right"' if align_right?(column) %>><%= i18n_column(column) %></th>
         <%- end -%>
         <th></th>
       </tr>
@@ -104,15 +121,13 @@
           <a ui-sref="<%= ng_singular_name %>({id: <%= ng_singular_name %>.id})" id="<%= singular_name %>_{{ <%= ng_singular_name %>.id }}_show">{{ <%= ng_singular_name %>.id }}</a></td>
         <%- klass.columns.each do |column| -%>
         <%- next if column.name == klass.primary_key.to_s -%>
-        <%- if column_is_association?(column) -%>
-        <td>{{ <%= ng_singular_name %>.<%= column_name(column).camelize(:lower) %>.name }}</td>
+        <td<%= ' class="text-right"' if align_right?(column) %>><%- if (assoc = association_for(column)) -%>
+        {{ <%= ng_singular_name %>.<%= ng_var(assoc.name) %>.name }}
         <%- elsif column.klass == Date || column.klass == Time -%>
-        <td>{{ <%= ng_singular_name %>.<%= column.name.camelize(:lower) %> | date }}</td>
-        <%- elsif column.klass <= Numeric -%>
-        <td class="text-right">{{ <%= ng_singular_name %>.<%= column.name.camelize(:lower) %> }}</td>
+        {{ <%= ng_singular_name %>.<%= column.name.camelize(:lower) %> | date }}
         <%- else -%>
-        <td>{{ <%= ng_singular_name %>.<%= column.name.camelize(:lower) %> }}</td>
-        <%- end -%>
+        {{ <%= ng_singular_name %>.<%= column.name.camelize(:lower) %> }}
+        <%- end -%></td>
         <%- end -%>
         <td class="text-right">
           <%%# VISUALIZAR %>

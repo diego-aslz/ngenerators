@@ -7,11 +7,15 @@ module Ng
       protected
 
       def ng_singular_name
-        singular_name.camelize(:lower)
+        ng_var(singular_name)
       end
 
       def ng_plural_name
-        plural_name.camelize(:lower)
+        ng_var(plural_name)
+      end
+
+      def ng_var(name)
+        name.camelize(:lower)
       end
 
       def klass
@@ -38,8 +42,8 @@ module Ng
         !!association_for(column)
       end
 
-      def association_for(column)
-        all_belongs_to.detect { |bt| bt.foreign_key.to_s == column.name }
+      def association_for(column, by: :foreign_key)
+        all_belongs_to.detect { |bt| bt.public_send(by).to_s == column.name }
       end
 
       def all_belongs_to
