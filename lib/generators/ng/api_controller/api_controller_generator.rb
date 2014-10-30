@@ -20,9 +20,15 @@ module Ng
       private
 
       def symbolic_columns
-        klass.columns.map(&:name).map do |name|
+        klass.columns.reject { |col| association_for(col) }.map(&:name).map do |name|
           ":#{name}"
         end
+      end
+
+      def preloads
+        all_belongs_to.map do |assoc|
+          ".preload(:#{assoc.name})"
+        end.join
       end
     end
   end
