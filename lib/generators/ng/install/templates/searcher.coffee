@@ -24,7 +24,7 @@
         scope.filters = {}
         search()
       qString = ->
-        queryString(parsed(scope.filters))
+        queryString(Model.processParameters(parsed(scope.filters)))
 
       search()
 
