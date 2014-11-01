@@ -15,7 +15,7 @@ module Ng
       end
 
       def ng_var(name)
-        name.camelize(:lower)
+        name.to_s.camelize(:lower)
       end
 
       def klass
