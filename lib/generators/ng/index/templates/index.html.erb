@@ -118,16 +118,14 @@
       </tr>
       <tr id="row_<%= singular_name %>_{{ <%= ng_singular_name %>.id }}" ng-repeat="<%= ng_singular_name %> in <%= ng_plural_name %>">
         <td class="text-right">
-          <a ui-sref="<%= ng_singular_name %>({id: <%= ng_singular_name %>.id})" id="<%= singular_name %>_{{ <%= ng_singular_name %>.id }}_show">{{ <%= ng_singular_name %>.id }}</a></td>
+          <a ui-sref="<%= ng_singular_name %>({id: <%= ng_singular_name %>.id})" id="<%= singular_name %>_{{ <%= ng_singular_name %>.id }}_show">{{ <%= ng_singular_name %>.id }}</a>
+        </td>
         <%- klass.columns.each do |column| -%>
         <%- next if column.name == klass.primary_key.to_s -%>
         <td<%= ' class="text-right"' if align_right?(column) %>><%- if (assoc = association_for(column)) -%>
-        {{ <%= ng_singular_name %>.<%= ng_var(assoc.name) %>.name }}
-        <%- elsif column.klass == Date || column.klass == Time -%>
-        {{ <%= ng_singular_name %>.<%= column.name.camelize(:lower) %> | date }}
-        <%- else -%>
-        {{ <%= ng_singular_name %>.<%= column.name.camelize(:lower) %> }}
-        <%- end -%></td>
+{{ <%= ng_singular_name %>.<%= ng_var(assoc.name) %>.name }}<%- elsif column.klass == Date || column.klass == Time -%>
+{{ <%= ng_singular_name %>.<%= column.name.camelize(:lower) %> | date }}<%- else -%>
+{{ <%= ng_singular_name %>.<%= column.name.camelize(:lower) %> }}<%- end -%></td>
         <%- end -%>
         <td class="text-right">
           <%%# VISUALIZAR %>
@@ -136,7 +134,7 @@
             <span class="glyphicon glyphicon-search"></span></a>
 
           <%%# ALTERAR %>
-          <a class="btn-warning btn btn-xs" ui-sref="edit<%= class_name %>({ id: <%= ng_singular_name %>.id })"
+          <a class="btn-warning btn btn-xs" ui-sref="<%= ng_singular_name %>Edit({ id: <%= ng_singular_name %>.id })"
             id="edit_<%= singular_name %>_{{ <%= ng_singular_name %>.id }}" title="Alterar" ng-show="<%= ng_singular_name %>.canUpdate">
             <span class="glyphicon glyphicon-pencil"></span></a>
         </td>

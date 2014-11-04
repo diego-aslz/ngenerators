@@ -9,9 +9,7 @@ describe "<%= class_name %>#form", js: true, type: :feature do
   <%- end -%>
   <%- end -%>
 
-  before do
-    sign_in user
-  end
+  before { sign_in user }
 
   it "saves new records" do
     <%- klass.columns.each do |column| -%>
@@ -56,5 +54,55 @@ describe "<%= class_name %>#form", js: true, type: :feature do
     expect(<%= singular_name %>.<%= column.name %>).to eq '1'
     <%- end -%>
     <%- end -%>
+  end
+
+  describe 'updates existing records' do
+    let(:<%= singular_name %>) { create :<%= singular_name %> }
+    let(:path) { "/<%= plural_name %>/#{<%= singular_name %>.id}/edit" }
+
+    it do
+      <%- klass.columns.each do |column| -%>
+      <%- if assoc = association_for(column) -%>
+      new_<%= assoc.name %> = create :<%= assoc.name %>
+      <%- end -%>
+      <%- end -%>
+      visit path
+
+      <%- klass.columns.each do |column| -%>
+      <%- if assoc = association_for(column) -%>
+      # FOR TYPEAHEAD
+      fill_in_typeahead '<%= i18n_column(column) %>', new_<%= assoc.name %>.name,
+        find('#by_<%= column_name(column) %>_wrapper')
+      # FOR SELECT
+      #select new_<%= assoc.name %>.name, from: '<%= i18n_column(column) %>'
+      <%- elsif column.type == :integer -%>
+      fill_in '<%= i18n_column(column) %>', with: 2
+      <%- elsif column.type == :boolean -%>
+      select '<%= I18n.t(:yes) %>', from: '<%= i18n_column(column) %>'
+      <%- elsif column.type == :date || column.type == :datetime -%>
+      fill_in '<%= i18n_column(column) %>', with: I18n.l(Date.new(2015, 12, 31))
+      <%- else -%>
+      fill_in '<%= i18n_column(column) %>', with: '2'
+      <%- end -%>
+      <%- end -%>
+
+      expect do
+        click_button 'Salvar'
+      end.to_not change(<%= class_name %>, :count)
+      <%= singular_name %>.reload
+      <%- klass.columns.each do |column| -%>
+      <%- if assoc = association_for(column) -%>
+      expect(<%= singular_name %>.<%= column.name %>).to eq new_<%= assoc.name %>.id
+      <%- elsif column.type == :integer -%>
+      expect(<%= singular_name %>.<%= column.name %>).to eq 2
+      <%- elsif column.type == :boolean -%>
+      expect(<%= singular_name %>.<%= column.name %>).to be_true
+      <%- elsif column.type == :date || column.type == :datetime -%>
+      expect(<%= singular_name %>.<%= column.name %>).to eq Date.new(2015, 12, 31)
+      <%- else -%>
+      expect(<%= singular_name %>.<%= column.name %>).to eq '2'
+      <%- end -%>
+      <%- end -%>
+    end
   end
 end

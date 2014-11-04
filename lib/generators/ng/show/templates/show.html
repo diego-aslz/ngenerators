@@ -7,10 +7,8 @@
   <span class="wrapper <%= singular_name %>_<%= column.name %>">
     <dt><%= i18n_column(column) %></dt>
     <dd class="content"><%- if (assoc = association_for(column)) -%>
-    {{ <%= ng_singular_name %>.<%= assoc.name.camelize(:lower) %>.name }}
-    <%- else -%>
-    {{ <%= ng_singular_name %>.<%= column.name.camelize(:lower) %> <%= ' | date' if column.type == :date || column.type == :datetime %> }}
-    <%- end -%></dd>
+{{ <%= ng_singular_name %>.<%= ng_var(assoc.name) %>.name }}<%- else -%>
+{{ <%= ng_singular_name %>.<%= ng_var(column.name) %><%= ' | date' if column.type == :date || column.type == :datetime %> }}<%- end -%></dd>
   </span>
 
   <%- end -%>

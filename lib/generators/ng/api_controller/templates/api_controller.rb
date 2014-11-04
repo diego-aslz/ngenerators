@@ -14,5 +14,20 @@ module Api
     <%- if anothers.any? -%>
     has_scope <%= anothers.map{ |col| ":by_#{col}"}.join(', ') %>
     <%- end -%>
+
+    protected
+
+    def permitted_params
+      [
+        <%- klass.columns.each do |column| -%>
+        :<%= column.name %>,
+        <%- end -%>
+      ]
+    end
+
+    def resource_params
+      return [] if request.get?
+      [params.require(:<%= singular_name %>).permit(permitted_params)]
+    end
   end
 end
