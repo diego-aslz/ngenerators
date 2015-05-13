@@ -47,7 +47,7 @@ module Ng
       end
 
       def all_belongs_to
-        klass.reflect_on_all_associations.select { |a| a.macro == :belongs_to }
+        klass.reflect_on_all_associations.select { |a| a.macro == :belongs_to || a.macro == :has_one }
       end
 
       def input_type(column)
