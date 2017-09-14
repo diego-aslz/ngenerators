@@ -80,18 +80,18 @@ describe "<%= class_name %>#index", js: true, type: :feature do
     <%- ################################################ -%>
     <%- # TESTING DATE FILTER -%>
     <%- elsif attribute.type == :date -%>
-    <%= singular_name %>1 = create :<%= singular_name %>, <%= column.name %>: 1.day.ago
-    <%= singular_name %>2 = create :<%= singular_name %>, <%= column.name %>: Date.today
+    <%= singular_name %>1 = create :<%= singular_name %>, <%= attribute.name %>: 1.day.ago
+    <%= singular_name %>2 = create :<%= singular_name %>, <%= attribute.name %>: Date.today
 
     visit index
-    fill_in '<%= column.name %>_until', with: <%= singular_name %>1.<%= column.name %>.strftime('%d/%m/%Y')
+    fill_in '<%= attribute.name %>_until', with: <%= singular_name %>1.<%= attribute.name %>.strftime('%d/%m/%Y')
     click_button 'Buscar'
 
     expect(page).to_not have_content(<%= singular_name %>2.name)
     expect(page).to     have_content(<%= singular_name %>1.name)
 
-    fill_in '<%= column.name %>_until', with: ''
-    fill_in '<%= column.name %>_since', with: <%= singular_name %>2.<%= column.name %>.strftime('%d/%m/%Y')
+    fill_in '<%= attribute.name %>_until', with: ''
+    fill_in '<%= attribute.name %>_since', with: <%= singular_name %>2.<%= attribute.name %>.strftime('%d/%m/%Y')
     click_button 'Buscar'
 
     expect(page).to_not have_content(<%= singular_name %>1.name)
